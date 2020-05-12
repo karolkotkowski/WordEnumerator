@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 public class WordEnumerator {
 
-    private final int WORDS_PER_LINE = 100;
-
     private List<String> lines;
     private Map<String, Set<Integer>> words;
 
@@ -33,8 +31,12 @@ public class WordEnumerator {
         enumerate();
     }
 
+    //enumerates text stored previously in lines
     private void enumerate() {
-        words = new HashMap<String, Set<Integer>>(lines.size() * WORDS_PER_LINE);
+
+        //used to determine initial size of HashMap containing words
+        final int WORDS_PER_LINE = 50;
+        words = new HashMap<>(lines.size() * WORDS_PER_LINE);
 
         Iterator<String> linesIterator = lines.iterator();
         String line;
@@ -53,16 +55,17 @@ public class WordEnumerator {
                 if (words.containsKey(word)) {
                     words.get(word).add(lineNumber);
                 } else {
-                    wordLines = new HashSet<Integer>(lines.size());
+                    wordLines = new HashSet<>(lines.size());
                     wordLines.add(lineNumber);
                     words.put(word, wordLines);
                 }
             }
         }
 
+        //sort words alphabetically
         words.entrySet()
                 .stream()
-                .sorted(Map.Entry.<String, Set<Integer>>comparingByKey(new IgnoreCaseComparator()))
+                .sorted(Map.Entry.comparingByKey(new IgnoreCaseComparator()))
                 .forEach(WordEnumerator::println);
     }
 
@@ -81,7 +84,7 @@ public class WordEnumerator {
         System.out.println(word + " - " + wordLinesSet.size() + " - pozycje -> [" + wordLines + "]");
     }
 
-    private final class IgnoreCaseComparator implements Comparator<String> {
+    private static final class IgnoreCaseComparator implements Comparator<String> {
 
         Collator collator = Collator.getInstance((new Locale("pl", "PL")));
 
